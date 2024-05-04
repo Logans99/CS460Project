@@ -8,8 +8,9 @@
 #include <memory>
 #include <stack>
 
-#include "SymbolTable.h"
 #include "nodeStruc.h"
+#include "parser.h"
+#include "structures.h"
 
 #ifndef ABSTRACT_SYNTAX_TREE_INTERPRETER_HPP
 #define ABSTRACT_SYNTAX_TREE_INTERPRETER_HPP
@@ -52,6 +53,55 @@ private:
         } else {
             // handle other types of statements
         }
+    }
+
+    int evaluateExpression(Nodes* node) {
+        std::stack<int> operandStack;
+
+        // Traverse the expression in postfix order
+        for (Nodes* current = node; current != nullptr; current = current->rightSibling) {
+            if (current->data.type == TokenType::INTEGER) {
+                // Push integer literals directly onto the stack
+                operandStack.push(std::stoi(current->data.value));
+            } else if (current->data.type == TokenType::IDENTIFIER) {
+                // Look up the value of identifiers in the symbol table and push onto the stack
+                operandStack.push(symbolTable.get(current->data.value));
+            } else {
+                // For operators, pop the necessary number of operands from the stack, perform the operation, and push the result back onto the stack
+                int rightOperand = operandStack.top();
+                operandStack.pop();
+                int leftOperand = operandStack.top();
+                operandStack.pop();
+
+                int result;
+                if (current->data.value == "+") {
+                    result = leftOperand + rightOperand;
+                } else if (current->data.value == "-") {
+                    result = leftOperand - rightOperand;
+                } else if (current->data.value == "*") {
+                    result = leftOperand * rightOperand;
+                } else if (current->data.value == "/") {
+                    result = leftOperand / rightOperand;
+                } else if (current->data.value == "%") {
+                    result = leftOperand % rightOperand;
+                } else if (current->data.value == "<") {
+                    result = leftOperand < rightOperand;
+                } else if (current->data.value == ">") {
+                    result = leftOperand > rightOperand;
+                } else if (current->data.value == "==") {
+                    result = leftOperand == rightOperand;
+                } else if (current->data.value == "&&") {
+                    result = leftOperand && rightOperand;
+                } else {
+                    // Handle other operators as needed
+                }
+
+                operandStack.push(result);
+            }
+        }
+
+        // The result of the expression is the final value left on the stack
+        return operandStack.top();
     }
 
     void executeIfStatement(Nodes* node) {
