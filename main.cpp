@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 
+#include "interpreter.h"
 #include "SymbolTable.h"
 #include "Transition.h"
 #include "Structures.h"
@@ -544,8 +545,12 @@ int main (int argc, char *argv[]) {
 
     std::string code = output->str.data();
     std::vector<Token> tokens = tokenize(code);
+
     Parser par(tokens);
     par.parse();
+
+    Interpreter interpreter(par.return_root());
+    interpreter.interpret();
 
     // Print the symbol table
     printf("\n");
@@ -553,89 +558,6 @@ int main (int argc, char *argv[]) {
     Make_new_tree(par.return_root());
     print(Make_new_tree(par.return_root()));
     delete(par.return_root());
-
-//    for (const Token& token : tokens) {
-//        std::cout << "Token type: ";
-//        switch (token.type) {
-//            case TokenType::IDENTIFIER:
-//                std::cout << "IDENTIFIER";
-//                break;
-//            case TokenType::DATATYPE_SPECIFIER:
-//                std::cout << "DATATYPE_SPECIFIER";
-//                break;
-//            case TokenType::INTEGER:
-//                std::cout << "INTEGER";
-//                break;
-//            case TokenType::LEFT_PARENTHESIS:
-//                std::cout << "LEFT_PARENTHESIS";
-//                break;
-//            case TokenType::RIGHT_PARENTHESIS:
-//                std::cout << "RIGHT_PARENTHESIS";
-//                break;
-//            case TokenType::LEFT_BRACE:
-//                std::cout << "LEFT_BRACE";
-//                break;
-//            case TokenType::RIGHT_BRACE:
-//                std::cout << "RIGHT_BRACE";
-//                break;
-//            case TokenType::SEMICOLON:
-//                std::cout << "SEMICOLON";
-//                break;
-//            case TokenType::ASSIGNMENT:
-//                std::cout << "ASSIGNMENT";
-//                break;
-//            case TokenType::PLUS:
-//                std::cout << "PLUS";
-//                break;
-//            case TokenType::ASTERISK:
-//                std::cout << "ASTERISK";
-//                break;
-//            case TokenType::MODULO:
-//                std::cout << "MODULO";
-//                break;
-//            case TokenType::COMMA:
-//                std::cout << "COMMA";
-//                break;
-//            case TokenType::DOUBLE_QUOTE:
-//                std::cout << "DOUBLE_QUOTE";
-//                break;
-//            case TokenType::SINGLE_QUOTE:
-//                std::cout << "SINGLE_QUOTE";
-//                break;
-//            case TokenType::STRING:
-//                std::cout << "STRING";
-//                break;
-//            case TokenType::GREATER_THAN_OR_EQUAL:
-//                std::cout << "GREATER_THAN_OR_EQUAL";
-//                break;
-//            case TokenType::LESS_THAN_OR_EQUAL:
-//                std::cout << "LESS_THAN_OR_EQUAL";
-//                break;
-//            case TokenType::BOOLEAN_AND:
-//                std::cout << "BOOLEAN_AND";
-//                break;
-//            case TokenType::LESS_THAN:
-//                std::cout << "LESS_THAN";
-//                break;
-//            case TokenType::GREATER_THAN:
-//                std::cout << "GREATER_THAN";
-//                break;
-//            case TokenType::LEFT_BRACKET:
-//                std::cout << "LEFT_BRACKET";
-//                break;
-//            case TokenType::RIGHT_BRACKET:
-//                std::cout << "RIGHT_BRACKET";
-//                break;
-//            case TokenType::SUBTRACTION:
-//                std::cout << "SUBTRACTION";
-//                break;
-//            case TokenType::DIVIDE:
-//                std::cout << "DIVIDE";
-//                break;
-//                // Add other cases as needed
-//        }
-//        std::cout << "\nToken: " << token.value << "\n";
-//    }
 
     return 0;
 }
