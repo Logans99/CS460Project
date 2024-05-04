@@ -68,6 +68,66 @@ private:
         }
     }
 
+    void executeForStatement(Nodes* node) {
+        // The initialization, condition, and increment parts of the for loop
+        Nodes* initialization = node->leftChild;
+        Nodes* condition = initialization->rightSibling;
+        Nodes* increment = condition->rightSibling;
+
+        // Execute the initialization statement
+        executeStatement(initialization);
+
+        // While the condition is true, execute the body and the increment statement
+        while (evaluateExpression(condition)) {
+            executeStatement(node->rightSibling);
+            executeStatement(increment);
+        }
+    }
+
+
+    void executeWhileStatement(Nodes* node) {
+        // While the condition is true, execute the body
+        while (evaluateExpression(node->leftChild)) {
+            executeStatement(node->rightSibling);
+        }
+    }
+
+    void executePrintStatement(Nodes* node) {
+        // Evaluate the arguments
+        Nodes* arg = node->leftChild;
+        while (arg != nullptr) {
+            std::cout << evaluateExpression(arg) << " ";
+            arg = arg->rightSibling;
+        }
+        std::cout << std::endl;
+    }
+
+    int executeReturnStatement(Nodes* node) {
+        return evaluateExpression(node->leftChild);
+    }
+
+    void executeAssignmentStatement(Nodes* node) {
+        int value = evaluateExpression(node->rightSibling);
+        symbolTable.set(node->leftChild->data.value, value);
+    }
+
+    int executeIdentifier(Nodes* node) {
+        return symbolTable.get(node->data.value);
+    }
+
+    int executeInteger(Nodes* node) {
+        return std::stoi(node->data.value);
+    }
+
+    int executeString(Nodes* node) {
+        // Handle string values as needed
+    }
+
+    void executeDeclarationStatement(Nodes* node) {
+        symbolTable.set(node->leftChild->data.value, 0);  // Initialize the variable to 0
+    }
+
+
 };
 
 #endif //ABSTRACT_SYNTAX_TREE_INTERPRETER_HPP
