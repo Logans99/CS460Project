@@ -8,9 +8,9 @@
 #include <memory>
 #include <stack>
 
-#include "nodeStruc.h"
+#include "nodestruc.h"
 #include "parser.h"
-#include "structures.h"
+#include "Structures.h"
 
 #ifndef ABSTRACT_SYNTAX_TREE_INTERPRETER_HPP
 #define ABSTRACT_SYNTAX_TREE_INTERPRETER_HPP
@@ -39,7 +39,7 @@ private:
                 operandStack.push(std::stoi(current->data.value));
             } else if (current->data.type == TokenType::IDENTIFIER) {
                 // Look up the value of identifiers in the symbol table and push onto the stack
-                operandStack.push(symbolTable.get(current->data.value));
+                //operandStack.push(symbolTable.get(current->data.value));
             } else {
                 // For operators, pop the necessary number of operands from the stack, perform the operation, and push the result back onto the stack
                 int rightOperand = operandStack.top();
@@ -159,11 +159,11 @@ private:
 
     void executeAssignmentStatement(Nodes* node) {
         int value = evaluateExpression(node->rightSibling);
-        symbolTable.set(node->leftChild->data.value, value);
+        //symbolTable.set(node->leftChild->data.value, value);
     }
 
     int executeIdentifier(Nodes* node) {
-        return symbolTable.get(node->data.value);
+        //return symbolTable.get(node->data.value);
     }
 
     int executeInteger(Nodes* node) {
@@ -175,7 +175,7 @@ private:
     }
 
     void executeDeclarationStatement(Nodes* node) {
-        symbolTable.set(node->leftChild->data.value, 0);  // Initialize the variable to 0
+        //symbolTable.set(node->leftChild->data.value, 0);  // Initialize the variable to 0
     }
 
 //    void executeProcedureStatement(Nodes* node) {

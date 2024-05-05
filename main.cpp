@@ -550,6 +550,7 @@ int main (int argc, char *argv[]) {
     Parser par(tokens);
     par.parse();
 
+    // interpreter setup
     SymbolTable symbolTable;
     Interpreter interpreter(par.return_root(), symbolTable);
     interpreter.interpret();

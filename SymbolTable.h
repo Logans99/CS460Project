@@ -44,6 +44,8 @@ public:
         return -1; // Return -1 if the symbol was not found
     }
 
+
+
     void print() {
         for (const auto& symbol : symbols) {
             std::cout << "IDENTIFIER_NAME: " << symbol.identifier_name << "\n";
