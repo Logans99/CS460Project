@@ -12,12 +12,13 @@
 #include <vector>
 #include <memory>
 
-#include "interpreter.h"
+
 #include "SymbolTable.h"
 #include "Transition.h"
 #include "Structures.h"
 #include "nodestruc.h"
-#include "parser.h"
+#include "interpreter.h"
+
 #include <stack>
 
 
@@ -549,7 +550,8 @@ int main (int argc, char *argv[]) {
     Parser par(tokens);
     par.parse();
 
-    Interpreter interpreter(par.return_root());
+    SymbolTable symbolTable;
+    Interpreter interpreter(par.return_root(), symbolTable);
     interpreter.interpret();
 
     // Print the symbol table

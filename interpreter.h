@@ -17,7 +17,7 @@
 
 class Interpreter {
 public:
-    Interpreter(Nodes* root) : root(root) {}
+    Interpreter(Nodes* root, SymbolTable& symbolTable) : root(root), symbolTable(symbolTable) {}
 
     void interpret() {
         executeStatement(root);
@@ -28,32 +28,6 @@ private:
     SymbolTable symbolTable;
     std::stack<int> callStack;
     int programCounter = 0;
-
-    void executeStatement(Nodes* node) {
-        if (node->data.type == TokenType::IF) {
-            executeIfStatement(node);
-        } else if (node->data.type == TokenType::FOR) {
-            executeForStatement(node);
-        } else if (node->data.type == TokenType::WHILE) {
-            executeWhileStatement(node);
-        } else if (node->data.type == TokenType::PrintF) {
-            executePrintStatement(node);
-        } else if (node->data.type == TokenType::RETURN) {
-            executeReturnStatement(node);
-        } else if (node->data.type == TokenType::ASSIGNMENT) {
-            executeAssignmentStatement(node);
-        } else if (node->data.type == TokenType::IDENTIFIER) {
-            executeIdentifier(node);
-        } else if (node->data.type == TokenType::INTEGER) {
-            executeInteger(node);
-        } else if (node->data.type == TokenType::STRING) {
-            executeString(node);
-        } else if (node->data.type == TokenType::DATATYPE_SPECIFIER) {
-            executeDeclarationStatement(node);
-        } else {
-            // handle other types of statements
-        }
-    }
 
     int evaluateExpression(Nodes* node) {
         std::stack<int> operandStack;
@@ -103,6 +77,33 @@ private:
         // The result of the expression is the final value left on the stack
         return operandStack.top();
     }
+
+    void executeStatement(Nodes* node) {
+        if (node->data.type == TokenType::IF) {
+            executeIfStatement(node);
+        } else if (node->data.type == TokenType::FOR) {
+            executeForStatement(node);
+        } else if (node->data.type == TokenType::WHILE) {
+            executeWhileStatement(node);
+        } else if (node->data.type == TokenType::PrintF) {
+            executePrintStatement(node);
+        } else if (node->data.type == TokenType::RETURN) {
+            executeReturnStatement(node);
+        } else if (node->data.type == TokenType::ASSIGNMENT) {
+            executeAssignmentStatement(node);
+        } else if (node->data.type == TokenType::IDENTIFIER) {
+            executeIdentifier(node);
+        } else if (node->data.type == TokenType::INTEGER) {
+            executeInteger(node);
+        } else if (node->data.type == TokenType::STRING) {
+            executeString(node);
+        } else if (node->data.type == TokenType::DATATYPE_SPECIFIER) {
+            executeDeclarationStatement(node);
+        } else {
+            // handle other types of statements
+        }
+    }
+
 
     void executeIfStatement(Nodes* node) {
         // Evaluate the condition
@@ -169,13 +170,51 @@ private:
         return std::stoi(node->data.value);
     }
 
-    int executeString(Nodes* node) {
-        // Handle string values as needed
+    std::string executeString(Nodes* node) {
+        return node->data.value;
     }
 
     void executeDeclarationStatement(Nodes* node) {
         symbolTable.set(node->leftChild->data.value, 0);  // Initialize the variable to 0
     }
+
+//    void executeProcedureStatement(Nodes* node) {
+//        // Push the current program counter onto the call stack
+//        callStack.push(programCounter);
+//
+//        // Set the program counter to the start of the procedure
+//        programCounter = /* the start of the procedure */;
+//
+//        // Execute the procedure's statements
+//        while (/* the procedure has not returned */) {
+//            executeStatement(/* the current statement */);
+//        }
+//
+//        // Pop the program counter from the call stack
+//        programCounter = callStack.top();
+//        callStack.pop();
+//    }
+//
+//    int executeFunctionStatement(Nodes* node) {
+//        // Push the current program counter onto the call stack
+//        callStack.push(programCounter);
+//
+//        // Set the program counter to the start of the function
+//        programCounter = /* the start of the function */;
+//
+//        // Execute the function's statements
+//        int returnValue;
+//        while (/* the function has not returned */) {
+//            returnValue = executeStatement(/* the current statement */);
+//        }
+//
+//        // Pop the program counter from the call stack
+//        programCounter = callStack.top();
+//        callStack.pop();
+//
+//        // Return the function's return value
+//        return returnValue;
+//    }
 
 
 };
