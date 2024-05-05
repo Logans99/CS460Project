@@ -98,7 +98,7 @@ private:
         } else if (node->data.type == TokenType::STRING) {
             executeString(node);
         } else if (node->data.type == TokenType::DATATYPE_SPECIFIER) {
-            executeDeclarationStatement(node);
+            //executeDeclarationStatement(node);
         } else {
             // handle other types of statements
         }
@@ -159,11 +159,11 @@ private:
 
     void executeAssignmentStatement(Nodes* node) {
         int value = evaluateExpression(node->rightSibling);
-        //symbolTable.set(node->leftChild->data.value, value);
+        symbolTable.update(node->leftChild->data.value, value);
     }
 
     int executeIdentifier(Nodes* node) {
-        //return symbolTable.get(node->data.value);
+        return symbolTable.get(node->data.value);
     }
 
     int executeInteger(Nodes* node) {
@@ -174,9 +174,16 @@ private:
         return node->data.value;
     }
 
-    void executeDeclarationStatement(Nodes* node) {
-        //symbolTable.set(node->leftChild->data.value, 0);  // Initialize the variable to 0
-    }
+    // declarations probably not necessary
+//    void executeDeclarationStatement(Nodes* node) {
+//        if (symbolTable.exists(node->leftChild->data.value)) {
+//            throw std::runtime_error("Error: Identifier already declared");
+//        }
+//        Symbol symbol;
+//        symbol.identifier_name = node->leftChild->data.value;
+//        symbol.value = 0;  // Initialize the variable to 0
+//        symbolTable.insert(symbol);
+//    }
 
 //    void executeProcedureStatement(Nodes* node) {
 //        // Push the current program counter onto the call stack

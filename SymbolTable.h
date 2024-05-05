@@ -14,6 +14,7 @@ struct Symbol {
     bool datatype_is_array;
     int datatype_array_size;
     int scope;
+    int value;
     std::vector<Symbol> parameters; // Store parameters if symbol is function or procedure
 };
 
@@ -44,6 +45,33 @@ public:
         return -1; // Return -1 if the symbol was not found
     }
 
+    int get(const std::string& identifier_name) {
+        for (const auto& symbol : symbols) {
+            if (symbol.identifier_name == identifier_name) {
+                return symbol.value;
+            }
+        }
+        throw std::runtime_error("Error: Identifier not found");
+    }
+
+    void update(const std::string& identifier_name, int new_value) {
+        for (auto& symbol : symbols) {
+            if (symbol.identifier_name == identifier_name) {
+                symbol.value = new_value;
+                return;
+            }
+        }
+        throw std::runtime_error("Error: Identifier not found");
+    }
+
+    bool exists(const std::string& identifier_name) {
+        for (const auto& symbol : symbols) {
+            if (symbol.identifier_name == identifier_name) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     void print() {

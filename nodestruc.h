@@ -50,6 +50,7 @@ void insertsibiling(Nodes* root, Nodes* newnode) {
     }
     insertsibiling(root->leftChild, newnode);
 }
+
 void print(Nodes* root) {
     if (root == nullptr) {
         return;
