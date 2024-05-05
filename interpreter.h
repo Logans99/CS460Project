@@ -144,7 +144,7 @@ private:
     }
 
     void executePrintStatement(Nodes* node) {
-        // Evaluate the arguments
+        // evaluate the arguments
         Nodes* arg = node->leftChild;
         while (arg != nullptr) {
             std::cout << evaluateExpression(arg) << " ";

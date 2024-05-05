@@ -521,7 +521,7 @@ int main (int argc, char *argv[]) {
     std::string inputLine; // line-by-line variable input
 
     while (std::getline(inputFile, inputLine))
-        input += inputLine + "\n";  // concatenate the line and a newline character
+        input += inputLine + "\n";  // Concatenate the line and a newline character
 
     // declare state, starting state being CODE
     State currentState = State::CODE;
