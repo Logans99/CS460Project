@@ -22,6 +22,8 @@
 #include <stack>
 
 
+
+
 std::vector<Token> tokenize(const std::string& code) {
     std::vector<Token> tokens;
     std::string currentToken;
@@ -292,7 +294,7 @@ void infix_maker(std::vector<Nodes *> currexppresion,Nodes * root) {
 
 
 
-Nodes * Make_new_tree(Nodes *root) {
+Nodes * Make_new_tree(Nodes *root,Nodes*& root2) {
     if (root == nullptr) {
         return root;
     }
@@ -303,6 +305,7 @@ Nodes * Make_new_tree(Nodes *root) {
     Token Head;
     Head.value="TREE HEAD";
     Nodes* newroot = makenode(Head);
+
     while (!nodesStack.empty()) {
 
         Nodes *current = nodesStack.top();
@@ -315,61 +318,24 @@ Nodes * Make_new_tree(Nodes *root) {
         }
         if (current->data.type == TokenType::FUNCTION||current->data.type == TokenType::PROCEDUR ||current->data.type == TokenType::DATATYPE_SPECIFIER) {
 
-
-            if(current->data.type != TokenType::DATATYPE_SPECIFIER) {
-                while (current->rightSibling != nullptr) {
-
-
-                    current = current->rightSibling;
-
-
-                }
-            }else {
-                while (current->rightSibling != nullptr) {
-                    if(current->data.type == TokenType::COMMA){
-                        Token NewToken;
-                        NewToken.type=TokenType::IDENTIFIER;
-                        NewToken.value="DECLERATION";
-                        NewToken.linefound=0;
-
-                        insertchild(newroot,makenode(NewToken));
-                    }
-                    current = current->rightSibling;
-                }
-
-
-
+            Nodes * temp =makenode(current->data);
+            insertchild(newroot,temp);
+            if(current->data.type == TokenType::PROCEDUR ) {
+                root2 = temp;
             }
 
-            Token NewToken;
-            NewToken.type=TokenType::IDENTIFIER;
-            NewToken.value="DECLERATION";
-            NewToken.linefound=0;
+            current = current->rightSibling;
+            while (current->rightSibling != nullptr) {
 
-            insertchild(newroot,makenode(NewToken));
 
-            if(current->data.type == TokenType::IDENTIFIER ){
+                insertsibiling(newroot,makenode(current->data));
+
                 current = current->rightSibling;
             }
-            if(current->data.type == TokenType::RIGHT_PARENTHESIS ||current->data.type == TokenType::SEMICOLON){
-                current = current->leftChild;
-                if(current == nullptr){
-                    return  newroot;
-                }
-                if(current->data.type == TokenType::LEFT_BRACE){
-                    Token NewToken;
-                    NewToken.type=TokenType::LEFT_BRACE;
-                    NewToken.value="BEGINBLOCK";
-                    NewToken.linefound=0;
+            insertsibiling(newroot,makenode(current->data));
 
-                    insertchild(newroot, makenode(NewToken));
+            current = current->leftChild;
 
-                    current = current->leftChild;
-
-
-                }
-
-            }
             nodesStack.push(current);
 
 
@@ -466,17 +432,11 @@ Nodes * Make_new_tree(Nodes *root) {
 
             else{
                 if(current->data.type==TokenType::IDENTIFIER && current->rightSibling->data.type ==TokenType::LEFT_PARENTHESIS ){
-                    Token NewToken;
-                    NewToken.type=TokenType::IDENTIFIER;
-                    NewToken.value="CALL";
-                    NewToken.linefound=0;
-                    insertchild(newroot, makenode(NewToken));
+
+                    insertchild(newroot, makenode(current->data));
                 }else {
-                    Token NewToken;
-                    NewToken.type = TokenType::ASSIGNMENT;
-                    NewToken.value = "ASSIGMENT";
-                    NewToken.linefound = 0;
-                    insertchild(newroot, makenode(NewToken));
+
+                    insertchild(newroot, makenode(current->data));
                 }
 
                 while (current->rightSibling != nullptr){
@@ -495,7 +455,7 @@ Nodes * Make_new_tree(Nodes *root) {
         }
     }
 
-  return newroot;
+    return newroot;
 }
 
 
@@ -558,8 +518,10 @@ int main (int argc, char *argv[]) {
     // Print the symbol table
     printf("\n");
 
-    Make_new_tree(par.return_root());
-    print(Make_new_tree(par.return_root()));
+    Nodes* head;
+    Nodes* root2= nullptr;
+    head = Make_new_tree(par.return_root(),root2);
+    print(head);
     delete(par.return_root());
 
     return 0;
