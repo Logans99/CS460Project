@@ -182,7 +182,6 @@ private:
         return node->data.value;
     }
 
-
     void executeProcedureStatement(Nodes* node) {
         // Get the name of the procedure from the node
         std::string procedureName = node->data.value;
@@ -192,19 +191,16 @@ private:
             // Execute the main procedure
             executeStatement(mainRoot);
         }
-            // Check if the procedure is the other function/procedure
+            // Check if the procedure is the other procedure
         else {
-            // Execute the other function/procedure
+            // Execute the other procedure
             executeStatement(funcRoot);
         }
     }
 
     int executeFunctionStatement(Nodes* node) {
-        // Get the name of the function from the node
-        std::string functionName = node->data.value;
-
-        // Execute the other function/procedure and get its return value
-
+        // Execute the function and get its return value
+        int returnValue = evaluateExpression(funcRoot); // assuming executeExpression returns the value of the function
 
         // Return the function's return value
         return returnValue;

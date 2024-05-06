@@ -510,10 +510,6 @@ int main (int argc, char *argv[]) {
     Parser par(tokens);
     par.parse();
 
-    // interpreter setup
-    SymbolTable symbolTable;
-    Interpreter interpreter(par.return_root(), symbolTable);
-    interpreter.interpret();
 
     // Print the symbol table
     printf("\n");
@@ -523,6 +519,10 @@ int main (int argc, char *argv[]) {
     head = Make_new_tree(par.return_root(),root2);
     print(head);
     delete(par.return_root());
+
+    SymbolTable& symbolTable = par.getSymbolTable();
+    Interpreter interpreter(root2, head, symbolTable);
+    interpreter.interpret();
 
     return 0;
 }
