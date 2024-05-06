@@ -17,14 +17,16 @@
 
 class Interpreter {
 public:
-    Interpreter(Nodes* root, SymbolTable& symbolTable) : root(root), symbolTable(symbolTable) {}
+    Interpreter(Nodes* mainRoot, Nodes* funcRoot, SymbolTable& symbolTable)
+            : mainRoot(mainRoot), funcRoot(funcRoot), symbolTable(symbolTable) {}
 
     void interpret() {
-        executeStatement(root);
+        executeStatement(mainRoot);
     }
 
 private:
-    Nodes* root;
+    Nodes* mainRoot;
+    Nodes* funcRoot;
     SymbolTable symbolTable;
     std::stack<int> callStack;
     int programCounter = 0;
@@ -39,7 +41,7 @@ private:
                 operandStack.push(std::stoi(current->data.value));
             } else if (current->data.type == TokenType::IDENTIFIER) {
                 // Look up the value of identifiers in the symbol table and push onto the stack
-                //operandStack.push(symbolTable.get(current->data.value));
+                operandStack.push(symbolTable.get(current->data.value));
             } else {
                 // For operators, pop the necessary number of operands from the stack, perform the operation, and push the result back onto the stack
                 int rightOperand = operandStack.top();
@@ -158,7 +160,13 @@ private:
     }
 
     void executeAssignmentStatement(Nodes* node) {
-        int value = evaluateExpression(node->rightSibling);
+        int value;
+        // Check if the right-hand side is a function call
+        if (node->rightSibling->data.type == TokenType::FUNCTION) {
+            value = executeFunctionStatement(node->rightSibling);
+        } else {
+            value = evaluateExpression(node->rightSibling);
+        }
         symbolTable.update(node->leftChild->data.value, value);
     }
 
@@ -174,54 +182,34 @@ private:
         return node->data.value;
     }
 
-    // declarations probably not necessary
-//    void executeDeclarationStatement(Nodes* node) {
-//        if (symbolTable.exists(node->leftChild->data.value)) {
-//            throw std::runtime_error("Error: Identifier already declared");
-//        }
-//        Symbol symbol;
-//        symbol.identifier_name = node->leftChild->data.value;
-//        symbol.value = 0;  // Initialize the variable to 0
-//        symbolTable.insert(symbol);
-//    }
 
-//    void executeProcedureStatement(Nodes* node) {
-//        // Push the current program counter onto the call stack
-//        callStack.push(programCounter);
-//
-//        // Set the program counter to the start of the procedure
-//        programCounter = /* the start of the procedure */;
-//
-//        // Execute the procedure's statements
-//        while (/* the procedure has not returned */) {
-//            executeStatement(/* the current statement */);
-//        }
-//
-//        // Pop the program counter from the call stack
-//        programCounter = callStack.top();
-//        callStack.pop();
-//    }
-//
-//    int executeFunctionStatement(Nodes* node) {
-//        // Push the current program counter onto the call stack
-//        callStack.push(programCounter);
-//
-//        // Set the program counter to the start of the function
-//        programCounter = /* the start of the function */;
-//
-//        // Execute the function's statements
-//        int returnValue;
-//        while (/* the function has not returned */) {
-//            returnValue = executeStatement(/* the current statement */);
-//        }
-//
-//        // Pop the program counter from the call stack
-//        programCounter = callStack.top();
-//        callStack.pop();
-//
-//        // Return the function's return value
-//        return returnValue;
-//    }
+    void executeProcedureStatement(Nodes* node) {
+        // Get the name of the procedure from the node
+        std::string procedureName = node->data.value;
+
+        // Check if the procedure is the main procedure
+        if (procedureName == "main") {
+            // Execute the main procedure
+            executeStatement(mainRoot);
+        }
+            // Check if the procedure is the other function/procedure
+        else {
+            // Execute the other function/procedure
+            executeStatement(funcRoot);
+        }
+    }
+
+    int executeFunctionStatement(Nodes* node) {
+        // Get the name of the function from the node
+        std::string functionName = node->data.value;
+
+        // Execute the other function/procedure and get its return value
+
+
+        // Return the function's return value
+        return returnValue;
+    }
+
 
 
 };
